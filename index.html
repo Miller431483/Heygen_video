@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="assets/gsap.min.js"></script>
+    <script src="assets/iso.js"></script>
+    <style>
+      :root {
+        --bg: #0b1026;
+        --ink: #f6f8ff;
+        --red: #e63946;
+        --gold: #ffd166;
+        --green: #2a9d8f;
+        --font-display: "Archivo Black", "Inter", sans-serif;
+        --font-body: "Inter", sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: var(--font-body);
+        color: var(--ink);
+      }
+      #root { position: absolute; inset: 0; overflow: hidden; }
+      .host { position: absolute; inset: 0; }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="28"
+      data-width="1920"
+      data-height="1080"
+    >
+      <div id="s1" class="host" data-composition-id="s1" data-composition-src="compositions/s1.html" data-start="0"  data-duration="5" data-track-index="0" data-width="1920" data-height="1080"></div>
+      <div id="s2" class="host" data-composition-id="s2" data-composition-src="compositions/s2.html" data-start="5"  data-duration="6" data-track-index="0" data-width="1920" data-height="1080"></div>
+      <div id="s3" class="host" data-composition-id="s3" data-composition-src="compositions/s3.html" data-start="11" data-duration="6" data-track-index="0" data-width="1920" data-height="1080"></div>
+      <div id="s4" class="host" data-composition-id="s4" data-composition-src="compositions/s4.html" data-start="17" data-duration="5" data-track-index="0" data-width="1920" data-height="1080"></div>
+      <div id="s5" class="host" data-composition-id="s5" data-composition-src="compositions/s5.html" data-start="22" data-duration="6" data-track-index="0" data-width="1920" data-height="1080"></div>
+    </div>
+    <script>
+      window.__timelines = window.__timelines || {};
+      const mainTl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = mainTl;
+      mainTl.seek(0);
+    </script>
+  </body>
+</html>

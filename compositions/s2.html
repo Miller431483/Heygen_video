@@ -1,0 +1,97 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: radial-gradient(1100px 700px at 50% 35%, #16204a 0%, #0b1026 65%, #070a1c 100%); }
+    .clip { position: absolute; }
+    .h-title { font-family: var(--font-display); font-weight: 400; font-size: 84px; color: var(--ink); letter-spacing: 0; }
+    .h-title .n { color: var(--gold); }
+    .h-sub { font-family: var(--font-body); font-weight: 400; font-size: 38px; color: #c9d2f2; margin-top: 14px; }
+    .tag { font-family: var(--font-body); font-weight: 700; font-size: 26px; letter-spacing: 0.3em; color: var(--red); }
+  </style>
+  <div id="root" data-composition-id="s2" data-width="1920" data-height="1080">
+    <div class="clip" data-start="0" data-duration="6" style="inset: 0;">
+      <div id="s2-cam" style="position: absolute; inset: 0; transform-origin: 50% 55%;"></div>
+    </div>
+    <div class="clip" data-start="0.3" data-duration="5.4" style="left: 110px; top: 110px; width: 1100px;">
+      <div id="s2-tag" class="tag">CHAPITRE 01</div>
+      <div id="s2-title" class="h-title" style="margin-top: 18px;"><span class="n">1 ·</span> L'ATELIER AU PÔLE NORD</div>
+      <div id="s2-sub" class="h-sub">La production tourne 24/7, toute l'année.</div>
+    </div>
+  </div>
+  <script>
+    (() => {
+      const tl = gsap.timeline({ paused: true });
+      HF.set(52, 960, 600);
+      const P = HF.P;
+      const rng = HF.mulberry32(77);
+
+      let s = "";
+      s += HF.ground(-3, -3, 20, "#dfe9ff");
+      s += HF.ground(-3, -3, 20, "none", 'stroke="#b9c8ee" stroke-width="2"');
+      // workshop
+      s += HF.cube(1, 1, 7, 4.2, { top: "#f4f7ff", left: "#e63946", right: "#b02330" });
+      s += HF.pyramid(1, 1, 7, 4.2, 2.4, ["#ffffff", "#e8eefc", "#cfd9f2", "#f4f7ff"]);
+      // door + windows on right wall (x=8 face)
+      s += `<polygon points="${HF.pts([P(8, 3, 0), P(8, 5, 0), P(8, 5, 2.4), P(8, 3, 2.4)])}" fill="#5a1420"/>`;
+      s += `<polygon points="${HF.pts([P(8, 5.6, 2.6), P(8, 6.6, 2.6), P(8, 6.6, 3.6), P(8, 5.6, 3.6)])}" fill="#ffd166"/>`;
+      // chimney + smoke
+      s += HF.cube(6.2, 1.4, 0.9, 6.4, { top: "#9aa3b2", left: "#6b7280", right: "#4b5563" });
+      for (let i = 0; i < 4; i++) {
+        const cx = P(6.65, 1.85, 6.6 + i * 1.1);
+        s += `<circle id="s2-smoke${i}" cx="${cx[0]}" cy="${cx[1]}" r="${14 + i * 9}" fill="#ffffff" opacity="0"/>`;
+      }
+      // conveyor belt
+      s += HF.cube(8.4, 4.4, 6, 0.3, { top: "#334155", left: "#1e293b", right: "#0f172a" });
+      // gifts on belt
+      const giftCols = [
+        { top: "#e63946", left: "#b02330", right: "#8f1b26" },
+        { top: "#2a9d8f", left: "#1f7a6f", right: "#155e56" },
+        { top: "#ffd166", left: "#d9a94f", right: "#b8892f" },
+        { top: "#4361ee", left: "#2f45b8", right: "#22348a" },
+      ];
+      const giftIds = [];
+      for (let i = 0; i < 4; i++) {
+        const gx = 9 + i * 1.4;
+        s += `<g id="s2-gift${i}">` + HF.cube(gx, 4.75, 0.95, 0.95, giftCols[i]) + HF.cube(gx + 0.35, 4.75, 0.25, 1.0, { top: "#fff", left: "#e5e7eb", right: "#cbd5e1" }) + "</g>";
+        giftIds.push("#s2-gift" + i);
+      }
+      // elves
+      for (let i = 0; i < 3; i++) {
+        const ex = 2.5 + i * 2.2, ey = 8.6;
+        const base = P(ex, ey, 0);
+        s += `<g id="s2-elf${i}">` + HF.cube(ex, ey, 0.8, 1.1, { top: "#2a9d8f", left: "#1f7a6f", right: "#155e56" }) + `<circle cx="${P(ex + 0.4, ey + 0.4, 1.5)[0]}" cy="${P(ex + 0.4, ey + 0.4, 1.5)[1]}" r="${0.45 * 52}" fill="#f1c27d"/>` + "</g>";
+      }
+      // trees
+      for (let i = 0; i < 6; i++) {
+        const tx = -2 + i * 3.4, ty = 12.4;
+        s += HF.cube(tx, ty, 0.4, 0.8, { top: "#6b4f2a", left: "#54401f", right: "#3d2e16" }) + HF.pyramid(tx - 0.3, ty - 0.3, 1.0, 0.8, 2.2, ["#1d5c46", "#174a39", "#123a2d", "#1d5c46"]);
+      }
+
+      document.getElementById("s2-cam").innerHTML = '<svg width="1920" height="1080" viewBox="0 0 1920 1080">' + s + "</svg>";
+
+      // camera zoom in then drift
+      tl.fromTo("#s2-cam", { scale: 0.82, x: 60, y: 40 }, { scale: 1.12, x: -30, y: -20, duration: 5.6, ease: "power2.inOut" }, 0);
+      // gifts slide along belt (+x iso direction)
+      const dx = 5 * 0.8660254 * 52, dy = 5 * 0.5 * 52;
+      giftIds.forEach((id, i) => {
+        tl.fromTo(id, { x: 0, y: 0 }, { x: dx, y: dy, duration: 4.6, ease: "none" }, 0.6 + i * 0.0);
+        tl.to(id, { opacity: 0, duration: 0.2, ease: "power1.in" }, 5.1);
+      });
+      // smoke puffs
+      for (let i = 0; i < 4; i++) {
+        tl.fromTo("#s2-smoke" + i, { opacity: 0, scale: 0.5, y: 0 }, { opacity: 0.75, scale: 1.4, y: -46, duration: 2.4, ease: "power1.out" }, 0.8 + i * 0.55);
+        tl.to("#s2-smoke" + i, { opacity: 0, duration: 0.5, ease: "power1.in" }, 0.8 + i * 0.55 + 1.9);
+      }
+      // elves bob
+      for (let i = 0; i < 3; i++) {
+        tl.fromTo("#s2-elf" + i, { y: 0 }, { y: -10, duration: 0.5, ease: "power1.inOut", repeat: 5, yoyo: true }, 1 + i * 0.3);
+      }
+      // text
+      tl.fromTo("#s2-tag", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.3);
+      tl.fromTo("#s2-title", { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.6, ease: "power4.out" }, 0.5);
+      tl.fromTo("#s2-sub", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, 0.95);
+      tl.to(["#s2-tag", "#s2-title", "#s2-sub"], { opacity: 0, y: -20, filter: "blur(8px)", duration: 0.35, ease: "power2.in" }, 5.5);
+
+      window.__timelines["s2"] = tl;
+    })();
+  </script>
+</template>
